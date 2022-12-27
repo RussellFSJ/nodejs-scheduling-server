@@ -1,23 +1,23 @@
 {
-  "name": "node_js_scheduling_server",
+  "name": "nodejs_scheduling_server",
   "version": "1.0.0",
   "description": "Simple Node.js Scheduling Server",
-  "main": "index.js",
+  "main": "server.js",
   "scripts": {
     "dev": "nodemon ./src/server.js",
     "start": "node ./src/server.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RussellFSJ/node_js_scheduling_server.git"
+    "url": "git+https://github.com/RussellFSJ/nodejs_scheduling_server.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/RussellFSJ/node_js_scheduling_server/issues"
+    "url": "https://github.com/RussellFSJ/nodejs_scheduling_server/issues"
   },
-  "homepage": "https://github.com/RussellFSJ/node_js_scheduling_server#readme",
+  "homepage": "https://github.com/RussellFSJ/nodejs_scheduling_server#readme",
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
