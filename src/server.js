@@ -21,7 +21,17 @@ db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to database. "));
 
 // schedule(s)
-global.schedules = require("./libs/schedules");
+global.schedules = {};
+getSchedule = require("./libs/schedules");
+const job = require("./libs/jobs")
+getSchedule().then((data) => {
+    data.forEach(schedule => {
+        schedule = schedule.toJSON();
+        schedule["job"] = job(schedule["crontab"], schedule["cleaning_plan_name"]);
+        schedules[schedule["schedule_name"]] = schedule;
+    });
+    // console.log(global.schedules)
+});
 
 // routers
 const routes = path.join(__dirname, "routes");
