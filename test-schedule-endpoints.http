@@ -1,0 +1,55 @@
+# install the vscode extension, REST Client by Huachao Mao to use this script
+
+# use this if you deployed the server using docker container
+# @server = http://localhost:5001
+
+# use this if you deployed the server using npm start
+@server = http://localhost:8091
+@schedule_id = 1337
+@schedule_name = test_schedule
+@crontab = 0 9 * * *
+@cleaning_plan_name = test_cleaning_plan
+
+# check if server is alive 
+GET {{server}}
+
+###
+
+# get all schedules
+GET {{server}}/schedules
+
+###
+
+# create new schedule
+POST {{server}}/schedules
+Content-Type: application/json
+
+{  
+    "schedule_id": "{{schedule_id}}",
+    "schedule_name": "{{schedule_name}}",
+    "crontab": "{{crontab}}",
+    "cleaning_plan_name": "{{cleaning_plan_name}}",
+    "expiration_date": "{{$localDatetime 'YYYY-MM-DDTHH:mm:ss.SSSZ' 0}}"
+}
+
+###
+
+# get schedule by id
+GET {{server}}/schedules/{{schedule_id}}
+
+###
+
+# update schedule
+PUT {{server}}/schedules/{{schedule_id}}
+Content-Type: application/json
+
+{  
+    "schedule_name": "{{schedule_name}}_new",
+    "crontab": "* * * * *",
+    "cleaning_plan_name": "{{cleaning_plan_name}}_new"
+}
+
+###
+
+# delete schedule
+DELETE {{server}}/schedules/{{schedule_id}}

@@ -35,8 +35,10 @@ getSchedule().then((data) => {
 
 // routers
 const routes = path.join(__dirname, "routes");
+const indexRouter = require(path.join(routes, "index"));
 const scheduleRouter = require(path.join(routes, "schedule"));
 
+app.use("/", indexRouter);
 app.use("/schedules", scheduleRouter);
 
 const PORT = process.env.PORT || 8091;
