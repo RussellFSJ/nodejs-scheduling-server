@@ -22,22 +22,26 @@ db.once("open", () => console.log("Connected to database. "));
 
 // schedule(s)
 global.schedules = {};
-getSchedule = require("./libs/schedules");
-const job = require("./libs/jobs")
+getSchedule = require("./libs/getSchedules");
+const createJob = require("./libs/createJob");
 getSchedule().then((data) => {
     data.forEach(schedule => {
-        schedule = schedule.toJSON();
-        schedule["job"] = job(schedule["crontab"], schedule["cleaning_plan_name"]);
-        schedules[schedule["schedule_name"]] = schedule;
+        // schedule = schedule.toJSON();
+        console.log(schedule)
+        schedule["job"] = createJob(schedule["schedule_id"], schedule["crontab"],
+            schedule["cleaning_plan_name"], schedule["expiration_date"]);
+        schedules[schedule["schedule_id"]] = schedule;
     });
     // console.log(global.schedules)
 });
 
 // routers
 const routes = path.join(__dirname, "routes");
+const indexRouter = require(path.join(routes, "index"));
 const scheduleRouter = require(path.join(routes, "schedule"));
 
-app.use("/schedule", scheduleRouter);
+app.use("/", indexRouter);
+app.use("/schedules", scheduleRouter);
 
 const PORT = process.env.PORT || 8091;
 app.listen(PORT, () => {
