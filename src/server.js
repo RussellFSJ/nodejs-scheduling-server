@@ -27,8 +27,10 @@ const job = require("./libs/jobs");
 getSchedule().then((data) => {
     data.forEach(schedule => {
         schedule = schedule.toJSON();
-        schedule["job"] = job(schedule["crontab"], schedule["cleaning_plan_name"]);
-        schedules[schedule["schedule_name"]] = schedule;
+        console.log(schedule)
+        schedule["job"] = job(schedule["schedule_id"], schedule["crontab"],
+            schedule["cleaning_plan_name"], schedule["expiration_date"]);
+        schedules[schedule["schedule_id"]] = schedule;
     });
     // console.log(global.schedules)
 });

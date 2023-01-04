@@ -32,7 +32,7 @@ const job = (schedule_id, crontab_expression, cleaning_plan, expiration_date) =>
 
             try {
                 response = await axios.post(url, request);
-                console.log(response);
+                console.log(response.data);
             }
             catch (error) {
                 console.log(error);
