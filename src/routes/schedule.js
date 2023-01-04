@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const job = require("../libs/jobs");
+const createJob = require("../libs/createJob");
 const flatted = require("flatted");
 
 // get all schedules in schedules object
@@ -23,7 +23,7 @@ router.post("/", (req, res) => {
 
     if (!schedules[schedule_id]) {
         try {
-            schedule["job"] = job(schedule_id, crontab, cleaning_plan_name, expiration_date);
+            schedule["job"] = createJob(schedule_id, crontab, cleaning_plan_name, expiration_date);
             schedules[schedule_id] = schedule;
 
             success = true;
@@ -70,7 +70,7 @@ router.put("/:id", (req, res) => {
             schedules[schedule_id]["job"].cancel();
             delete schedules[schedule_id]["job"];
 
-            schedules[schedule_id]["job"] = job(schedule_id, crontab, cleaning_plan_name, expiration_date);
+            schedules[schedule_id]["job"] = createJob(schedule_id, crontab, cleaning_plan_name, expiration_date);
 
             success = true;
             message = `Successfully updated ${schedule_id}.`;

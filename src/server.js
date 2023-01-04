@@ -22,13 +22,13 @@ db.once("open", () => console.log("Connected to database. "));
 
 // schedule(s)
 global.schedules = {};
-getSchedule = require("./libs/schedules");
-const job = require("./libs/jobs");
+getSchedule = require("./libs/getSchedules");
+const createJob = require("./libs/createJob");
 getSchedule().then((data) => {
     data.forEach(schedule => {
-        schedule = schedule.toJSON();
+        // schedule = schedule.toJSON();
         console.log(schedule)
-        schedule["job"] = job(schedule["schedule_id"], schedule["crontab"],
+        schedule["job"] = createJob(schedule["schedule_id"], schedule["crontab"],
             schedule["cleaning_plan_name"], schedule["expiration_date"]);
         schedules[schedule["schedule_id"]] = schedule;
     });

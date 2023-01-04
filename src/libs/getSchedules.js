@@ -1,4 +1,3 @@
-require("dotenv").config();
 const Schedules = require("../models/schedules");
 
 // queries schedules from mongodb and returns a promise of the query
