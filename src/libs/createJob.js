@@ -13,6 +13,7 @@ const createJob = (schedule_id, crontab_expression, cleaning_plan, expiration_da
             schedules[schedule_id]["job"].cancel();
             delete schedules[schedule_id];
             try {
+                // ? Should it delete from the MongoDB?
                 await Schedules.deleteOne({ "schedule_id": schedule_id });
             }
             catch (error) {
