@@ -1,25 +1,33 @@
 const path = require("path");
 const axios = require("axios");
 
-let url = path.join(process.env.API_URL, "goal_queue_size");
-let response = {};
-let goal_queue_size = 0;
+const endpoint = "/goal_queue_size"
+const url = new URL(`${process.env.API_URL}${endpoint}`);
 
 const getGoalQueueSize = async () => {
     let request = {
-        "api_key": process.env.API_KEY, "robot_name": process.env.ROBOT_NAME,
+        "api_key": process.env.API_KEY, 
+        "robot_name": process.env.ROBOT_NAME,
     };
+    
+    let goal_queue_size = 0;
 
     try {
-        response = await axios.post(url, request);
-
-        goal_queue_size = response.data.result.goal_queue_size;
+        const response = await axios.post(url, request)
+        return new Promise((resolve, reject) => {
+            goal_queue_size = response.data.result.goal_queue_size;
+            console.log(response.data.result);
+            resolve(goal_queue_size);
+        });
     }
     catch (error) {
         console.log(error);
+
+        // This is a failure case
+        goal_queue_size = -2;
+        return goal_queue_size;
     }
 
-    return goal_queue_size;
 }
 
 module.exports = getGoalQueueSize;
