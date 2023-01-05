@@ -1,9 +1,11 @@
+// Define "require"
 require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const app = express();
+
 
 app.use(express.json());
 
@@ -20,16 +22,22 @@ const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
 db.once("open", () => console.log("Connected to database. "));
 
+
 // schedule(s)
 global.schedules = {};
 getSchedule = require("./libs/getSchedules");
 const createJob = require("./libs/createJob");
 getSchedule().then((data) => {
     data.forEach(schedule => {
-        // schedule = schedule.toJSON();
-        console.log(schedule)
-        schedule["job"] = createJob(schedule["schedule_id"], schedule["crontab"],
-            schedule["cleaning_plan_name"], schedule["expiration_date"]);
+        schedule = schedule.toJSON();
+
+        schedule["job"] = createJob(
+            schedule["schedule_id"],
+            schedule["crontab"],
+            schedule["cleaning_plan_name"],
+            schedule["expiration_date"]
+        );
+
         schedules[schedule["schedule_id"]] = schedule;
     });
     // console.log(global.schedules)
