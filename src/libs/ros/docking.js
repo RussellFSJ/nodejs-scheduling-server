@@ -1,7 +1,8 @@
 const path = require("path");
 const axios = require("axios");
 
-let url = path.join(process.env.API_URL, "docking");
+const endpoint = "/docking"
+const url = new URL(`${process.env.API_URL}${endpoint}`);
 let response = {};
 let success = false;
 
