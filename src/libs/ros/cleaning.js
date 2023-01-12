@@ -8,7 +8,7 @@ let success = false;
 const cleaning = async (cleaning_plan) => {
     let request = {
         "api_key": process.env.API_KEY, "robot_name": process.env.ROBOT_NAME,
-        "process": cleaning_plan, "type": "zones"
+        "process": cleaning_plan, "type": "reverse"
     };
 
     try {
