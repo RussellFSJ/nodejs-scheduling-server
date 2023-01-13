@@ -1,26 +1,25 @@
 const path = require("path");
 const axios = require("axios");
 
-let url = path.join(process.env.API_URL, "start_process");
+let url = path.join(process.env.API_URL, "docking_result");
 let response = {};
-let success = false;
+let docking_result = 0;
 
-const cleaning = async (cleaning_plan) => {
+const getDockingResult = async () => {
     let request = {
         "api_key": process.env.API_KEY, "robot_name": process.env.ROBOT_NAME,
-        "process": cleaning_plan, "type": "reverse"
     };
 
     try {
         response = await axios.post(url, request);
 
-        success = response.data.success;
+        docking_result = response.data.result;
     }
     catch (error) {
         console.log(error);
     }
 
-    return success;
+    return docking_result;
 }
 
-module.exports = cleaning;
+module.exports = getDockingResult;

@@ -1,58 +1,76 @@
-const { cleaning, docking, getGoalQueueSize, getPosition,
-    localise, manageGoals, publishGoal } = require("./ros");
+const { cleaning, docking, getDockingResult, getGoalQueueSize, getPosition,
+    localise, manageGoals, navigate, publishGoal } = require("./ros");
 const euclidean_dist = require("euclidean-distance");
-const roundToDown = require("round-to").roundToDown;
 const sleep = require("./sleep");
 
 // needs refinement for checks 
-const cleaningProcess = (cleaning_plan) => {
+const cleaningProcess = async (cleaning_plan) => {
     let home_position = JSON.parse(process.env.HOME_ZONES)[cleaning_plan]
+    let robot_position = await getPosition();
 
-    // checks if robot is at dock and undocks
-    if (euclidean_dist(getPosition, home_position) < 1) {
+    // undock
+    docking("undock");
+
+    let docking_result = false;
+
+    // checks if docking is successful 
+    while (!docking_result) {
         console.log("Undocking...");
-        docking("undock");
+        await sleep(1000);
+        docking_result = await getDockingResult();
     }
 
-    sleep(5000);
+    // localise
+    console.log("Localising...");
+    localise();
 
-    // checks if robot is at home position and localises robot
-    if (roundToDown(euclidean_dist(getPosition, home_position), 0) == 0) {
-        console.log("Localising...");
-        localise()
-    }
-
-    sleep(5000);
+    await sleep(10000);
 
     // starts cleaning_plan
-    cleaning(cleaning_plan);
+    await cleaning(cleaning_plan);
+    await sleep(10000);
     console.log("Started cleaning plan.")
 
-    // checks goal_queue_size every 3 mins
-    while (getGoalQueueSize() > 10) {
+    // checks goal_queue_size every 30s
+    while (await getGoalQueueSize() != 0) {
         console.log("Cleaning...")
-        sleep(180000);
+        await sleep(5000);
     }
+    
+    // navigate to home position
+    await navigate(home_position);
 
-    // add home position to end of cleaning plan
-    publishGoal(home_position);
+    // checks goal queue when robot is navigating to home position
+    // sends the goal to home zone again if goal is cancelled before reaching home
+    while (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) >= 0.2) {
+        console.log("Navigating to home position...");
 
-    while (roundToDown(euclidean_dist(getPosition, home_position), 0)) {
-        console.log("Navigating to home position...")
-        if (getGoalQueueSize == 0) {
+        // navigate to home position
+        // await navigate(home_position);
+
+        if (await getGoalQueueSize() == 0) {
             // add home position to end of cleaning plan again if cancelled 
             publishGoal(home_position);
-            // execute goal to home position
-            manageGoals(1, "");
+            await manageGoals(0, "");
         }
-        sleep(1000);
+
+        await sleep(5000);
+        robot_position = await getPosition();
     }
 
-    // dock at home 
+    // undock
     docking("dock");
-    console.log("Docking...")
 
-    console.log("Done.")
+    docking_result = false;
+
+    // checks if docking is successful 
+    while (!docking_result) {
+        console.log("Docking...");
+        await sleep(1000);
+        docking_result = await getDockingResult();
+    }
+
+    console.log("Done.");
 
 }
 
