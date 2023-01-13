@@ -20,28 +20,9 @@ const cleaningProcess = async (cleaning_plan) => {
         docking_result = await getDockingResult();
     }
 
-
-    // console.log("after undocking:")
-    // console.log(robot_position.slice(0, 2));
-    // console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)))
-
-    // while (Math.floor(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)), 0) != 0) {
-    //     await sleep(5000);
-    //     robot_position = await getPosition();
-    // }
-
-    console.log("before localising:")
-    console.log(robot_position.slice(0, 2))
-    console.log(Math.floor(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)), 0))
-
+    // localise
     console.log("Localising...");
     localise();
-
-    // checks if robot is at home position and localises robot
-    // if (Math.floor(euclidean_dist(await getPosition(), home_position), 0) == 0) {
-    //     console.log("Localising...");
-    //     localise();
-    // }
 
     await sleep(10000);
 
@@ -58,17 +39,10 @@ const cleaningProcess = async (cleaning_plan) => {
     
     // navigate to home position
     await navigate(home_position);
-    // add home position to end of cleaning plan
-    // publishGoal(home_position);
 
-    // await sleep(10000);
-
-    // await manageGoals(0, "");
-
-    console.log(robot_position);
-    console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)))
-
-    while (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) >= 0.02) {
+    // checks goal queue when robot is navigating to home position
+    // sends the goal to home zone again if goal is cancelled before reaching home
+    while (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) >= 0.2) {
         console.log("Navigating to home position...");
 
         // navigate to home position
@@ -84,10 +58,6 @@ const cleaningProcess = async (cleaning_plan) => {
         robot_position = await getPosition();
     }
 
-    // await manageGoals(0, "");
-    console.log(robot_position)
-    console.log(Math.floor(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)), 0))
-
     // undock
     docking("dock");
 
@@ -102,14 +72,6 @@ const cleaningProcess = async (cleaning_plan) => {
 
     console.log("Done.");
 
-
-    // robot_position = await getPosition();
-
-    // console.log(robot_position);
-    // console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)))
-
-    // if (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) < 1) {
-    // }
 }
 
 module.exports = cleaningProcess;
