@@ -13,7 +13,7 @@ const cleaningProcess = async (cleaning_plan) => {
 
     let docking_result = false;
 
-    // checks if docking is successful 
+    // checks if undocking is successful 
     while (!docking_result) {
         console.log("Undocking...");
         await sleep(1000);
@@ -58,7 +58,7 @@ const cleaningProcess = async (cleaning_plan) => {
         robot_position = await getPosition();
     }
 
-    // undock
+    // dock
     docking("dock");
 
     docking_result = false;
