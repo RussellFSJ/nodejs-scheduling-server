@@ -4,7 +4,7 @@
 # @server = http://192.168.69.102:8091
 
 # use this if you deployed the server using docker container
-# @server = http://localhost:5002
+# @server = http://localhost:5001
 
 # use this if you deployed the server using npm start
 @server = http://localhost:8091
