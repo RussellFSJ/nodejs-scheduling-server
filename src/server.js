@@ -29,7 +29,7 @@ getSchedule().then((data) => {
         schedule = schedule.toJSON();
         // console.log(schedule)
         schedule["job"] = createJob(schedule["schedule_id"], schedule["crontab"],
-            schedule["cleaning_plan_name"], schedule["expiration_date"]);
+            schedule["cleaning_plan_name"], schedule["cleaning_receipt"], schedule["expiration_date"]);
         schedules[schedule["schedule_id"]] = schedule;
     });
     // console.log(global.schedules)
