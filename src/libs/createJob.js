@@ -3,7 +3,7 @@ const Schedules = require("../models/schedules");
 const cleaningProcess = require("./cleaningProcess");
 
 // creates a cronjob that calls API endpoint(s) on robot to perform desired action(s)
-const createJob = (schedule_id, crontab_expression, cleaning_plan, expiration_date) => {
+const createJob = (schedule_id, crontab_expression, cleaning_plan, cleaning_zones, expiration_date) => {
     return scheduler.scheduleJob(crontab_expression, async () => {
         let present = new Date();
         let expiry = new Date(expiration_date);
@@ -21,7 +21,7 @@ const createJob = (schedule_id, crontab_expression, cleaning_plan, expiration_da
         }
         else {
             try {
-                cleaningProcess(cleaning_plan);
+                cleaningProcess(cleaning_plan, cleaning_zones);
             }
             catch (error) {
                 console.log(`Failed to execute/complete cleaning process. ${error}`)

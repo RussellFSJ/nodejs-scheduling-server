@@ -15,7 +15,8 @@ router.post("/", (req, res) => {
     let schedule = req.body;
     let schedule_id = req.body.schedule_id;
     let crontab = req.body.crontab;
-    let cleaning_plan_name = req.body.cleaning_plan_name;
+    let cleaning_plan = req.body.cleaning_plan_name;
+    let cleaning_zones = req.body.cleaning_receipt;
     let expiration_date = req.body.expiration_date;
 
     let success = false;
@@ -23,7 +24,7 @@ router.post("/", (req, res) => {
 
     if (!schedules[schedule_id]) {
         try {
-            schedule["job"] = createJob(schedule_id, crontab, cleaning_plan_name, expiration_date);
+            schedule["job"] = createJob(schedule_id, crontab, cleaning_plan, cleaning_zones, expiration_date);
             schedules[schedule_id] = schedule;
 
             success = true;
@@ -55,7 +56,8 @@ router.put("/:id", (req, res) => {
     let schedule_id = req.params.id;
     let schedule_name = req.body.schedule_name;
     let crontab = req.body.crontab;
-    let cleaning_plan_name = req.body.cleaning_plan_name;
+    let cleaning_plan = req.body.cleaning_plan_name;
+    let cleaning_zones = req.body.cleaning_receipt;
     let expiration_date = req.body.expiration_date;
 
     let success = false;
@@ -64,13 +66,14 @@ router.put("/:id", (req, res) => {
     if (schedules[schedule_id]) {
         try {
             schedules[schedule_id]["schedule_name"] = schedule_name;
-            schedules[schedule_id]["cleaning_plan_name"] = cleaning_plan_name;
+            schedules[schedule_id]["cleaning_plan_name"] = cleaning_plan;
+            schedules[schedule_id]["cleaning_receipt"] = cleaning_zones;
             schedules[schedule_id]["crontab"] = crontab;
 
             schedules[schedule_id]["job"].cancel();
             delete schedules[schedule_id]["job"];
 
-            schedules[schedule_id]["job"] = createJob(schedule_id, crontab, cleaning_plan_name, expiration_date);
+            schedules[schedule_id]["job"] = createJob(schedule_id, crontab, cleaning_plan, cleaning_zones, expiration_date);
 
             success = true;
             message = `Successfully updated ${schedule_id}.`;

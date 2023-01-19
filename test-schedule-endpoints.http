@@ -32,6 +32,7 @@ Content-Type: application/json
     "schedule_name": "{{schedule_name}}",
     "crontab": "{{crontab}}",
     "cleaning_plan_name": "{{cleaning_plan_name}}",
+    "cleaning_receipt":{ "cleaning_zone_1": {"coordinates": "[[1.9424001779556277,-1.0545998667031526],[-1.8207998781204222,-1.0545998667031526],[-1.9743998804092404,-7.851399967983365],[1.8656001768112187,-7.851399967983365]]", "vacuum": "2", "repetition": "1", "roller": "1", "gutter": "1", "preset": "GlobotixFloor"} },
     "expiration_date": "{{$localDatetime 'YYYY-MM-DDTHH:mm:ss.SSSZ' 0}}"
 }
 
