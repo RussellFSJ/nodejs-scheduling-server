@@ -8,10 +8,10 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
     let home_position = JSON.parse(process.env.HOME_ZONES)[cleaning_plan]
     let robot_position = await getPosition();
 
+    let docking_result = await getDockingResult();
+
     // undock
     docking("undock");
-
-    let docking_result = false;
 
     // checks if undocking is successful 
     while (!docking_result) {
@@ -58,11 +58,11 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         robot_position = await getPosition();
     }
 
+    docking_result = await getDockingResult();
+
     // dock
     docking("dock");
-
-    docking_result = false;
-
+    
     // checks if docking is successful 
     while (!docking_result) {
         console.log("Docking...");
