@@ -5,8 +5,10 @@ const sleep = require("./sleep");
 
 // needs refinement for checks 
 const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
+    let message = "";
+
     try {
-        let message = "";
+        // used for docking and navigating to home zone
         let get_result_count = 0;
         let attempts = 0;
 
@@ -18,41 +20,65 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         // undock
         docking("undock");
 
-        // checks if undocking is successful 
+        // checks if undocking is successful, attempts the undock up to 3 times before failing
         while (!docking_result) {
-            console.log("Undocking...");
-            await sleep(1000);
-            docking_result = await getDockingResult();
-            get_result_count += 1;
             if (attempts >= 3) {
-                message += `Failed to undock after ${attempts} attempts.`;
+                message = `Failed to undock after ${attempts} attempts.`;
                 throw message;
             }
 
-            if (!docking_result && get_result_count >= 10) {
+            if (!docking_result && get_result_count >= 5) {
                 docking("undock");
                 attempts += 1;
                 get_result_count = 0;
 
                 console.log(`Undocking retry attempt: ${attempts}`);
             }
+
+            console.log("Undocking...");
+            await sleep(1000);
+            get_result_count += 1;
+            docking_result = await getDockingResult();
         }
+
+        // reset counts
+        get_result_count = 0;
+        attempts = 0;
 
         // localise
         console.log("Localising...");
-        localise();
+        let localise_response;
+        try {
+            localise_response = await localise();
 
-        await sleep(10000);
+            if (!localise_response) {
+                message = "The robot may not be localised, please check RViz/WebViz to confirm.";
+                throw message;
+            }
+        } catch (error) {
+            console.log(error);
+        }
+
+        await sleep(5000);
 
         // starts cleaning_plan
-        await cleaning(cleaning_plan, cleaning_zones);
+        let cleaning_response = await cleaning(cleaning_plan, cleaning_zones);
+        let goal_queue_size = await getGoalQueueSize();
         await sleep(10000);
-        console.log("Started cleaning plan.")
 
-        // checks goal_queue_size every 30s
-        while (await getGoalQueueSize() != 0) {
+        // checks if cleaning plan fails or if related nodes are dead
+        if (!cleaning_response || goal_queue_size == 0) {
+            message = "Cleaning plan has failed, please check and restart goal_manager or goal_owner accordingly. ";
+            throw message;
+        }
+
+        console.log("Started cleaning plan.");
+
+        // checks goal_queue_size every 5s
+        while (goal_queue_size != 0) {
             console.log("Cleaning...")
             await sleep(5000);
+            goal_queue_size = await getGoalQueueSize();
         }
 
         // navigate to home position
@@ -61,39 +87,61 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         // checks goal queue when robot is navigating to home position
         // sends the goal to home zone again if goal is cancelled before reaching home
         while (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) >= 0.2) {
-            console.log("Navigating to home position...");
+            if (attempts >= 3) {
+                message = `Failed to navigate to home zone after ${attempts} attempts.`;
+                throw message;
+            }
 
-            // navigate to home position
-            // await navigate(home_position);
-
-            if (await getGoalQueueSize() == 0) {
+            if (!goal_queue_size && get_result_count >= 5) {
                 // add home position to end of cleaning plan again if cancelled 
                 publishGoal(home_position);
                 await manageGoals(0, "");
+                attempts += 1;
+                get_result_count = 0;
+
+                console.log(`Navigating to home zone retry attempt: ${attempts}`);
             }
 
+            console.log("Navigating to home position...");
             await sleep(5000);
+            get_result_count += 1;
             robot_position = await getPosition();
         }
+
+        // reset counts
+        get_result_count = 0;
+        attempts = 0;
 
         docking_result = await getDockingResult();
 
         // dock
         docking("dock");
 
-        // checks if docking is successful 
+        // checks if docking is successful, attempts the dock up to 3 times before failing
         while (!docking_result) {
+            if (attempts >= 3) {
+                message = `Failed to dock after ${attempts} attempts.`;
+                throw message;
+            }
+
+            if (!docking_result && get_result_count >= 5) {
+                docking("dock");
+                attempts += 1;
+                get_result_count = 0;
+
+                console.log(`Docking retry attempt: ${attempts}`);
+            }
+
             console.log("Docking...");
             await sleep(1000);
+            get_result_count += 1;
             docking_result = await getDockingResult();
         }
 
         console.log("Done.");
 
-    }
-    catch (error) {
-        message += error;
-        console.log(message);
+    } catch (error) {
+        console.log(`${error} Please run the rest of the schedule manually.`);
     }
 }
 
