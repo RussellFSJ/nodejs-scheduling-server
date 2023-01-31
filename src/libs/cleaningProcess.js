@@ -27,7 +27,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
                 throw message;
             }
 
-            if (!docking_result && get_result_count >= 5) {
+            if (!docking_result && get_result_count >= 10) {
                 docking("undock");
                 attempts += 1;
                 get_result_count = 0;
@@ -124,7 +124,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
                 throw message;
             }
 
-            if (!docking_result && get_result_count >= 5) {
+            if (!docking_result && get_result_count >= 10) {
                 docking("dock");
                 attempts += 1;
                 get_result_count = 0;
