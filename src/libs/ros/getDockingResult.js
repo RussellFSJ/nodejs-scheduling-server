@@ -3,7 +3,7 @@ const axios = require("axios");
 
 let url = path.join(process.env.API_URL, "docking_result");
 let response = {};
-let docking_result = 0;
+let docking_result = false;
 
 const getDockingResult = async () => {
     let request = {

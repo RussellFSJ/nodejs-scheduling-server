@@ -36,7 +36,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
             }
 
             console.log("Undocking...");
-            await sleep(1000);
+            await sleep(5000);
             get_result_count += 1;
             docking_result = await getDockingResult();
         }
@@ -133,7 +133,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
             }
 
             console.log("Docking...");
-            await sleep(1000);
+            await sleep(5000);
             get_result_count += 1;
             docking_result = await getDockingResult();
         }
