@@ -28,6 +28,10 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
             }
 
             if (!docking_result && get_result_count >= 10) {
+                if (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) < 0.2) {
+                    break;
+                }
+                
                 docking("undock");
                 attempts += 1;
                 get_result_count = 0;
