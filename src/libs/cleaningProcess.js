@@ -31,7 +31,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
 
                 robot_position = await getPosition();
 
-                console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)))
+                console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)));
 
                 if (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) < 0.2) {
                     break;
@@ -53,6 +53,8 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         // reset counts
         get_result_count = 0;
         attempts = 0;
+
+        await sleep(3000);
 
         // localise
         console.log("Localising...");
