@@ -31,6 +31,8 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
 
                 robot_position = await getPosition();
 
+                console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)))
+
                 if (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) < 0.2) {
                     break;
                 }
