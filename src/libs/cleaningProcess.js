@@ -1,4 +1,4 @@
-const { cleaning, docking, getDockingResult, getGoalQueueSize, getPosition,
+const { cleaning, docking, getDockingFeedback, getGoalQueueSize, getPosition,
     localise, manageGoals, navigate, publishGoal } = require("./ros");
 const euclidean_dist = require("euclidean-distance");
 const sleep = require("./sleep");
@@ -15,13 +15,13 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         let home_position = JSON.parse(process.env.HOME_ZONES)[cleaning_plan];
         let robot_position = await getPosition();
 
-        let docking_result = await getDockingResult();
+        let docking_feedback = await getDockingFeedback();
 
         // undock
         docking("undock");
 
         // checks if undocking is successful, attempts the undock up to 3 times before failing
-        while (!docking_result) {
+        while (!docking_feedback.includes("Success")) {
             if (attempts >= 3) {
                 message = `Failed to undock after ${attempts} attempts.`;
                 throw message;
@@ -31,7 +31,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
 
                 robot_position = await getPosition();
 
-                console.log(euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)));
+                console.log(`Distance between robot and home coordinates: ${euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2))}`);
 
                 if (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) < 0.2) {
                     break;
