@@ -56,14 +56,17 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
 
         // change to cleaning state 3
         if (await changeRobotState(3)) {
-            console.log("Changing to Cleaning State...")
+            console.log("Changing to Cleaning State...");
         } else {
-            console.log("Robot is already in Cleaning State!")
+            console.log("Robot is already in Cleaning State!");
         }
 
         // change map
-        await changeMap(cleaning_plan);
-        console.log(`Changing map to ${cleaning_plan}...`)
+        if (await changeMap(cleaning_plan)) {
+            console.log(`Changing map to ${cleaning_plan}...`);
+        } else {
+            console.log(`Robot is already in ${cleaning_plan}!`);
+        }
 
         await sleep(3000);
 
