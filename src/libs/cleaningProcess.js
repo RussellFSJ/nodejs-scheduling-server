@@ -1,5 +1,5 @@
 const { cleaning, docking, getDockingFeedback, getGoalQueueSize, getPosition,
-    localise, manageGoals, navigate, publishGoal } = require("./ros");
+    localise, manageGoals, navigate, publishGoal, changeMap, changeRobotState } = require("./ros");
 const euclidean_dist = require("euclidean-distance");
 const sleep = require("./sleep");
 
@@ -27,7 +27,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
                 throw message;
             }
 
-            if (!docking_result && get_result_count >= 10) {
+            if (!docking_feedback.includes("Success") && get_result_count >= 10) {
 
                 robot_position = await getPosition();
 
@@ -47,12 +47,23 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
             console.log("Undocking...");
             await sleep(5000);
             get_result_count += 1;
-            docking_result = await getDockingResult();
+            docking_feedback = await getDockingFeedback();
         }
 
         // reset counts
         get_result_count = 0;
         attempts = 0;
+
+        // change to cleaning state 3
+        if (await changeRobotState(3)) {
+            console.log("Changing to Cleaning State...")
+        } else {
+            console.log("Robot is already in Cleaning State!")
+        }
+
+        // change map
+        await changeMap(cleaning_plan);
+        console.log(`Changing map to ${cleaning_plan}...`)
 
         await sleep(3000);
 
@@ -123,19 +134,19 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         get_result_count = 0;
         attempts = 0;
 
-        docking_result = await getDockingResult();
+        docking_feedback = await getDockingFeedback();
 
         // dock
         docking("dock");
 
         // checks if docking is successful, attempts the dock up to 3 times before failing
-        while (!docking_result) {
+        while (!docking_feedback.includes("Success")) {
             if (attempts >= 3) {
                 message = `Failed to dock after ${attempts} attempts.`;
                 throw message;
             }
 
-            if (!docking_result && get_result_count >= 10) {
+            if (!docking_feedback.includes("Success") && get_result_count >= 10) {
                 docking("dock");
                 attempts += 1;
                 get_result_count = 0;
@@ -146,7 +157,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
             console.log("Docking...");
             await sleep(5000);
             get_result_count += 1;
-            docking_result = await getDockingResult();
+            docking_feedback = await getDockingFeedback();
         }
 
         console.log("Done.");

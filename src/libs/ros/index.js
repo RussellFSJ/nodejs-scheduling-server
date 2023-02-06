@@ -1,3 +1,5 @@
+const changeMap = require("./changeMap");
+const changeRobotState = require("./changeRobotState");
 const cleaning = require("./cleaning");
 const docking = require("./docking");
 const getDockingResult = require("./getDockingResult");
@@ -9,4 +11,4 @@ const manageGoals = require("./manageGoals");
 const navigate = require("./navigate");
 const publishGoal = require("./publishGoal");
 
-module.exports = { cleaning, docking, getDockingResult, getDockingFeedback, getGoalQueueSize, getPosition, localise, manageGoals, navigate, publishGoal };
+module.exports = { changeMap, changeRobotState, cleaning, docking, getDockingResult, getDockingFeedback, getGoalQueueSize, getPosition, localise, manageGoals, navigate, publishGoal };
