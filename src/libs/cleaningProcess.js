@@ -16,6 +16,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         let robot_position = await getPosition();
 
         let docking_feedback = await getDockingFeedback();
+        console.log(docking_feedback);
 
         // undock
         docking("undock");
@@ -166,7 +167,7 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         console.log("Done.");
 
     } catch (error) {
-        console.log(`${error} Please run the rest of the schedule manually.`);
+        console.log(`${error}. Please run the rest of the schedule manually.`);
     }
 }
 
