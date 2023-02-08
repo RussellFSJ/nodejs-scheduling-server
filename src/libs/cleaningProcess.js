@@ -16,7 +16,6 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         let robot_position = await getPosition();
 
         let docking_feedback = await getDockingFeedback();
-        console.log(docking_feedback);
 
         // undock
         docking("undock");
@@ -28,31 +27,19 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
                 throw message;
             }
 
-            if (!docking_feedback.includes("Success") && get_result_count >= 10) {
-
-                robot_position = await getPosition();
-
-                console.log(`Distance between robot and home coordinates: ${euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2))}`);
-
-                if (euclidean_dist(robot_position.slice(0, 2), home_position.slice(0, 2)) < 0.2) {
-                    break;
-                }
-
+            if (docking_feedback.includes("Failed")) {
                 docking("undock");
                 attempts += 1;
-                get_result_count = 0;
 
                 console.log(`Undocking retry attempt: ${attempts}`);
             }
 
             console.log("Undocking...");
             await sleep(5000);
-            get_result_count += 1;
             docking_feedback = await getDockingFeedback();
         }
 
         // reset counts
-        get_result_count = 0;
         attempts = 0;
 
         // change to cleaning state 3
@@ -135,7 +122,6 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
         }
 
         // reset counts
-        get_result_count = 0;
         attempts = 0;
 
         docking_feedback = await getDockingFeedback();
@@ -150,17 +136,15 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
                 throw message;
             }
 
-            if (!docking_feedback.includes("Success") && get_result_count >= 10) {
+            if (docking_feedback.includes("Failed")) {
                 docking("dock");
                 attempts += 1;
-                get_result_count = 0;
 
                 console.log(`Docking retry attempt: ${attempts}`);
             }
 
             console.log("Docking...");
             await sleep(5000);
-            get_result_count += 1;
             docking_feedback = await getDockingFeedback();
         }
 
