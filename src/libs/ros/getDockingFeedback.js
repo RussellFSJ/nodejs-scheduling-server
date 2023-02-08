@@ -1,11 +1,11 @@
 const path = require("path");
 const axios = require("axios");
 
-let url = path.join(process.env.API_URL, "docking_result");
+let url = path.join(process.env.API_URL, "docking_feedback");
 let response = {};
-let docking_result = false;
+let docking_feedback = "";
 
-const getDockingResult = async () => {
+const getDockingFeedback = async () => {
     let request = {
         "api_key": process.env.API_KEY, "robot_name": process.env.ROBOT_NAME,
     };
@@ -13,13 +13,13 @@ const getDockingResult = async () => {
     try {
         response = await axios.post(url, request);
 
-        docking_result = response.data.result;
+        docking_feedback = response.data.result;
     }
     catch (error) {
         console.log(error);
     }
 
-    return docking_result;
+    return docking_feedback;
 }
 
-module.exports = getDockingResult;
+module.exports = getDockingFeedback;

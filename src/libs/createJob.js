@@ -12,12 +12,14 @@ const createJob = (schedule_id, crontab_expression, cleaning_plan, cleaning_zone
         if ((expiry - present) < 0) {
             schedules[schedule_id]["job"].cancel();
             delete schedules[schedule_id];
-            try {
-                await Schedules.deleteOne({ "schedule_id": schedule_id });
-            }
-            catch (error) {
-                console.log(`Failed to delete document from MongoDB. ${error}`);
-            }
+
+            // to be discussed: how to delete expired entry to align with the ui 
+            // try {
+            //     await Schedules.deleteOne({ "schedule_id": schedule_id });
+            // }
+            // catch (error) {
+            //     console.log(`Failed to delete document from MongoDB. ${error}`);
+            // }
         }
         else {
             try {
