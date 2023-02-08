@@ -3,7 +3,6 @@ const { cleaning, docking, getDockingFeedback, getGoalQueueSize, getPosition,
 const euclidean_dist = require("euclidean-distance");
 const sleep = require("./sleep");
 
-// needs refinement for checks 
 const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
     let message = "";
 

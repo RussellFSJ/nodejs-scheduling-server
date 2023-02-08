@@ -29,6 +29,11 @@ This application will read documents from `schedules` collection from `MongoDB` 
 
 Please ensure that `flexa_ui` and `flexa_fleet_adapter` are both running in conjunction with the scheduling server. This is a neccessary step as it takes in incoming schedules from `flexa_ui` during robot operation(s) and intructs the robot via `flexa_fleet_adapter`. 
 
+### To run
+```
+npm start
+```
+
 ## Docker
 
 ### Building the docker image
