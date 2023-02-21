@@ -136,6 +136,11 @@ const cleaningProcess = async (cleaning_plan, cleaning_zones) => {
             }
 
             if (docking_feedback.includes("Failed")) {
+                // fixes orientation of robot should docking fail during parallel correction
+                await navigate(home_position);
+                await sleep(3000);
+
+                // attempts to dock after navigating to home zone
                 docking("dock");
                 attempts += 1;
 
