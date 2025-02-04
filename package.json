@@ -27,7 +27,7 @@
     "express": "^4.18.2",
     "flatted": "^3.2.7",
     "luxon": "^3.2.1",
-    "mongoose": "^6.8.1",
+    "mongoose": "^6.13.6",
     "node-schedule": "^2.1.0",
     "path-to-regexp": "^0.1.10",
     "round-to": "^6.0.0"
